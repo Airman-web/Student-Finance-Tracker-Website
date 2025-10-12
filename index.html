@@ -1,57 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S<!DOCTYPE html>
-<html lang="en">
-<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Finance Tracker</title>
-
-  <!-- CSS file link -->
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+  <!-- CSS file -->
   <link rel="stylesheet" href="styles/main.css" />
 </head>
-
 <body>
-  <!-- This skip link lets the users to jump to the main content easily -->
-  <a class="skip-link" href="#main">Skip to main content</a>
 
-  <!-- Header of the website -->
+  <!-- HEADER -->
   <header>
+    <p class="highlighted">Smart Finance Management for Students</p>
     <h1>Student Finance Tracker</h1>
-    <!-- Navigation menu for switching between sections -->
-    <nav>
-      <ul>
-        <li><button data-section="dashboard">Dashboard</button></li>
-        <li><button data-section="records">Records</button></li>
-        <li><button data-section="add">Add New</button></li>
-        <li><button data-section="settings">Settings</button></li>
-        <li><button data-section="about">About</button></li>
-      </ul>
-    </nav>
+    <h6>Take control of your finances with powerful budgeting tools, transaction tracking, and insightful analytics designed specifically for students.</h6>
   </header>
 
-  <!-- Main area where all sections live -->
+  <!-- MAIN CONTENT -->
   <main id="main">
-    <!-- Dashboard Section -->
-    <section id="dashboard" class="active">
+    <section id="about">
+      <h2>About This App</h2>
+      <p>Take control of your finances with powerful budgeting tools, transaction tracking, and insightful analytics designed specifically for students.</p>
+      <ul>
+        <li><a href="mailto:e.atigbi@alustudent.com">Email</a></li>
+        <li><a href="https://github.com/Airman-web/Student-Finance-Tracker-Website" target="_blank">GitHub</a></li>
+      </ul>
+    </section>
+
+    <section id="dashboard">
       <h2>Dashboard</h2>
-      <div id="stats">
-        <!-- JS will fill in total spent, top category, etc. -->
+      <div class="summary">
+        <p>Total Spent: <span id="total-spent">0</span> RWF</p>
+        <p>Top Category: <span id="top-category">N/A</span></p>
+      </div>
+      <div class="chart-area">
+        <h3>Last 7 Days Trend</h3>
+        <canvas id="trendChart" width="400" height="200"></canvas>
       </div>
     </section>
 
-    <!-- Records Table Section -->
     <section id="records">
       <h2>Transactions</h2>
-
-      <!-- Search bar (will use regex later) -->
       <label for="search">Search (supports regex):</label>
       <input type="text" id="search" placeholder="e.g. coffee|tea" />
-
-      <!-- Table that lists all records -->
       <table>
         <thead>
           <tr>
@@ -63,21 +56,18 @@
           </tr>
         </thead>
         <tbody id="records-body">
-          <!-- JS will dynamically render rows here -->
+          <!-- JS will render rows -->
         </tbody>
       </table>
     </section>
 
-    <!-- Add/Edit Form Section -->
     <section id="add">
       <h2>Add Transaction</h2>
       <form id="record-form">
         <label for="description">Description:</label>
         <input type="text" id="description" required />
-
         <label for="amount">Amount:</label>
         <input type="number" id="amount" step="0.01" required />
-
         <label for="category">Category:</label>
         <select id="category">
           <option value="Food">Food</option>
@@ -87,61 +77,47 @@
           <option value="Fees">Fees</option>
           <option value="Other">Other</option>
         </select>
-
         <label for="date">Date:</label>
         <input type="date" id="date" required />
-
         <button type="submit">Save</button>
       </form>
     </section>
 
-    <!-- Settings Section -->
     <section id="settings">
       <h2>Settings</h2>
-      <p>Set your currency and conversion rates.</p>
       <label for="base-currency">Base Currency:</label>
       <select id="base-currency">
         <option value="RWF">RWF</option>
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
       </select>
-
       <label for="rate-usd">RWF → USD Rate:</label>
       <input type="number" id="rate-usd" step="0.01" />
-
       <label for="rate-eur">RWF → EUR Rate:</label>
       <input type="number" id="rate-eur" step="0.01" />
-
       <button id="save-settings">Save Settings</button>
     </section>
-
-    <!-- About Section -->
-    <section id="about">
-      <h2>About This App</h2>
-      <p>This Student Finance Tracker helps students manage budgets and expenses effectively.</p>
-      <p>Created by Emmanuel Atigbi</p>
-      <ul>
-        <li><a href="mailto:youremail@example.com">Email</a></li>
-        <li><a href="https://github.com/YOURUSERNAME" target="_blank">GitHub</a></li>
-      </ul>
-    </section>
   </main>
+
+  <!-- NAVIGATION (mobile-first, horizontal bottom) -->
+  <nav aria-label="Main Navigation">
+    <ul>
+      <li><a href="#home" class="active" aria-label="Home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
+      <li><a href="#dashboard" aria-label="Dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a></li>
+      <li><a href="#about" aria-label="About"><i class="fa-solid fa-circle-info"></i><span>About</span></a></li>
+      <li><a href="#records" aria-label="Records Table"><i class="fa-solid fa-table-list"></i><span>Records</span></a></li>
+      <li><a href="#add" aria-label="Add/Edit Form"><i class="fa-solid fa-plus"></i><span>Add/Edit</span></a></li>
+      <li><a href="#settings" aria-label="Settings"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+    </ul>
+  </nav>
 
   <footer>
     <p>&copy; 2025 Student Finance Tracker</p>
   </footer>
 
-  <!-- Link JS files -->
-  <script src="scripts/state.js"></script>
-  <script src="scripts/storage.js"></script>
-  <script src="scripts/validators.js"></script>
-  <script src="scripts/search.js"></script>
-  <script src="scripts/ui.js"></script>
-</body>
-</html>
-</title>
-</head>
-<body>
-    
+
+<script src="scripts/ui.js"></script>
+
+
 </body>
 </html>
