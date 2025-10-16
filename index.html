@@ -1,109 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Finance Tracker</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+  
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
   <!-- CSS file -->
   <link rel="stylesheet" href="styles/main.css" />
 </head>
+
 <body>
+<!-- Skip link to content-->
+<a href="#main" class="skip-link">Skip to main content</a>
 
   <!-- HEADER -->
-  <header>
+  <header id="home" role="banner">
     <p class="highlighted">Smart Finance Management for Students</p>
     <h1>Student Finance Tracker</h1>
-    <h6>Take control of your finances with powerful budgeting tools, transaction tracking, and insightful analytics designed specifically for students.</h6>
+    <p>Take control of your finances with powerful budgeting tools, transaction tracking, and insightful analytics designed specifically for students.</p>
+    <a href="#dashboard" class="button" aria-label="Get started with dashboard">Get started</a>
+    <a href="#about" class="btn" aria-label="Learn more about this app">Learn More</a>
+  </header>
+
   </header>
 
   <!-- MAIN CONTENT -->
-  <main id="main">
-    <section id="about">
-      <h2>About This App</h2>
-      <p>Take control of your finances with powerful budgeting tools, transaction tracking, and insightful analytics designed specifically for students.</p>
+  <main id="main" role="main">
+    <!-- Announcements for screen readers -->
+    <div id="announcer" role="status" aria-live="polite" style="position: absolute; left:-9999px;"></div>
+
+    <section id="about" aria-labelledby="about-heading">
+      <h2 id="about-heading">About This App</h2>  
+<p>Take control of your finances with powerful budgeting tools, transaction tracking, and insightful analytics designed specifically for students.</p>
+<p>Our app helps students:</p>
+<ul>
+  <li>Track daily spending and income easily.</li>
+  <li>Set monthly budget limits and monitor overspending.</li>
+  <li>Visualize spending trends over the last 7 days.</li>
+  <li>Analyze which categories consume the most funds.</li>
+  <li>Search and filter transactions quickly using regex or keywords.</li>
+  <li>Export or import data for backup or analysis.</li>
+  <li>Use smart alerts for duplicates, invalid inputs, or budget overruns.</li>
+</ul>
+<p>Empowering students to make smarter financial decisions, understand their habits, and save more effectively.</p>
       <ul>
         <li><a href="mailto:e.atigbi@alustudent.com">Email</a></li>
         <li><a href="https://github.com/Airman-web/Student-Finance-Tracker-Website" target="_blank">GitHub</a></li>
       </ul>
     </section>
 
-    <section id="dashboard">
-      <h2>Dashboard</h2>
-      <div class="summary">
-        <p>Total Spent: <span id="total-spent">0</span> RWF</p>
-        <p>Top Category: <span id="top-category">N/A</span></p>
-      </div>
-      <div class="chart-area">
-        <h3>Last 7 Days Trend</h3>
-        <canvas id="trendChart" width="400" height="200"></canvas>
-      </div>
+    <section id="dashboard" aria-labelledby="dashboard-heading">
+      <h2 id="dashboard-heading">Stats Dashboard</h2>
+  
+  <!-- Budget Cap -->
+  <div class="budget-cap">
+    <h3>Budget Cap</h3>
+    <label for="budget-limit">Monthly Budget Limit:</label>
+    <input type="number" id="budget-limit" placeholder="Enter budget limit" step="0.01">
+    <button id="set-budget">Set Budget</button>
+    <div id="budget-status" role="alert" aria-live="assertive"></div>
+  </div>
+  
+  <!-- Stats Cards -->
+  <div class="stats">
+    <div class="stat-card">
+      <i class="fas fa-list"></i>
+      <p>Total Records</p>
+      <span id="total-records">0</span>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-money-bill-wave"></i>
+      <p>Total Amount</p>
+      <span id="total-amount">0</span>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-chart-pie"></i>
+      <p>Top Category</p>
+      <span id="top-category">N/A</span>
+    </div>
+  </div>
+  
+  <!-- Charts -->
+  <div class="charts-container">
+    <div class="chart-box">
+      <h3>Last 7 Days Spending</h3>
+      <canvas id="trend-chart"></canvas>
+    </div>
+    
+    <div class="chart-box">
+      <h3>Spending by Category</h3>
+      <canvas id="category-chart"></canvas>
+    </div>
+  </div>
+</section>
+  
+</section>
+<section id="records" aria-labelledby="records-heading">
+  <h2 id="records-heading">Transactions</h2>
+  <label for="search">Search (supports regex):</label>
+  <input type="text" id="search" placeholder="e.g. coffee|tea" aria-describedby="search-help" />
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="records-body">
+      <!-- JS will render rows -->  
+    </tbody>
+  </table>
+
+  <button id="last-7-days-btn" style="margin-bottom:10px; cursor:pointer;">
+  Last 7 Days Records
+</button>
+
+  
+  <!-- Optional: container for total spent last 7 days -->
+  <div id="trend-container" style="margin-top: 0.5rem; color: #333;"></div>
+</section>
+
+
+    <section id="add" aria-labelledby="add-heading">
+      <h2 id="add-heading">Add Transaction</h2>
+
+      <!-- Form for adding/editing records -->
+<form id="record-form">
+  <label for="description">Description:</label>
+  <input type="text" id="description" required />
+
+  <!-- Case-insensitive toggle for regex -->
+  <label>
+    <input type="checkbox" id="caseToggle"> Case-insensitive
+  </label>
+
+  <!-- Amount Input -->
+  <label for="amount">Amount:</label>
+  <input type="number" id="amount" step="0.01" required />
+
+  <!-- Category Select -->
+  <label for="category">Category:</label>
+  <select id="category">
+    <option value="Food">Food</option>
+    <option value="Books">Books</option>
+    <option value="Transport">Transport</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Fees">Fees</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <!-- Date Input -->
+  <label for="date">Date:</label>
+  <input type="date" id="date" required />
+
+  <!-- Hidden text preview for highlighting regex matches -->
+  <div id="textPreview" hidden>
+    Coffee is my favorite drink. I like Coffee every morning.
+  </div>
+
+  <!-- Output container for highlighted matches -->
+  <div id="highlightOutput" aria-live="polite" style="margin-top:0.5rem;"></div>
+
+  <!-- Submit Button -->
+  <button type="submit">Save</button>
+</form>
+
     </section>
 
-    <section id="records">
-      <h2>Transactions</h2>
-      <label for="search">Search (supports regex):</label>
-      <input type="text" id="search" placeholder="e.g. coffee|tea" />
-      <table>
-        <thead>
-          <tr>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Category</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="records-body">
-          <!-- JS will render rows -->
-        </tbody>
-      </table>
-    </section>
-
-    <section id="add">
-      <h2>Add Transaction</h2>
-      <form id="record-form">
-        <label for="description">Description:</label>
-        <input type="text" id="description" required />
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" step="0.01" required />
-        <label for="category">Category:</label>
-        <select id="category">
-          <option value="Food">Food</option>
-          <option value="Books">Books</option>
-          <option value="Transport">Transport</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Fees">Fees</option>
-          <option value="Other">Other</option>
-        </select>
-        <label for="date">Date:</label>
-        <input type="date" id="date" required />
-        <button type="submit">Save</button>
-      </form>
-    </section>
-
-    <section id="settings">
-      <h2>Settings</h2>
-      <label for="base-currency">Base Currency:</label>
-      <select id="base-currency">
-        <option value="RWF">RWF</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
-      <label for="rate-usd">RWF → USD Rate:</label>
-      <input type="number" id="rate-usd" step="0.01" />
-      <label for="rate-eur">RWF → EUR Rate:</label>
-      <input type="number" id="rate-eur" step="0.01" />
-      <button id="save-settings">Save Settings</button>
-    </section>
+    <section id="settings" aria-labelledby="settings-heading">
+      <h2 id="settings-heading">Settings</h2>
+      
+  <!-- Currency Settings -->
+  <h3>Currency Settings</h3>
+  <label for="base-currency">Base Currency:</label>
+  <select id="base-currency">
+    <option value="RWF">RWF</option>
+    <option value="USD">USD</option>
+    <option value="EUR">EUR</option>
+  </select>
+  
+  <label for="rate-usd">RWF → USD Rate:</label>
+  <input type="number" id="rate-usd" step="0.000001" />
+  
+  <label for="rate-eur">RWF → EUR Rate:</label>
+  <input type="number" id="rate-eur" step="0.000001" />
+  
+  <button id="save-settings">Save Settings</button>
+  
+  <hr style="margin: 2rem 0;">
+  
+  <!-- Import/Export -->
+  <h3>Data Management</h3>
+  <button id="export-json">Export Data (JSON)</button>
+  <input type="file" id="import-json" accept=".json" style="display:none;">
+  <button id="import-json-btn">Import Data (JSON)</button>
+  
+  <div id="import-status" role="status" aria-live="polite" style="margin-top:1rem;"></div>
+</section>
   </main>
 
   <!-- NAVIGATION (mobile-first, horizontal bottom) -->
-  <nav aria-label="Main Navigation">
+  <nav aria-label="Main Navigation" role="navigation">
     <ul>
       <li><a href="#home" class="active" aria-label="Home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
-      <li><a href="#dashboard" aria-label="Dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a></li>
+      <li><a href="#dashboard" aria-label="dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a></li>
       <li><a href="#about" aria-label="About"><i class="fa-solid fa-circle-info"></i><span>About</span></a></li>
       <li><a href="#records" aria-label="Records Table"><i class="fa-solid fa-table-list"></i><span>Records</span></a></li>
       <li><a href="#add" aria-label="Add/Edit Form"><i class="fa-solid fa-plus"></i><span>Add/Edit</span></a></li>
@@ -111,13 +224,11 @@
     </ul>
   </nav>
 
-  <footer>
+  <footer role="contentinfo">
     <p>&copy; 2025 Student Finance Tracker</p>
-  </footer>
+  </footer> 
 
 
-<script src="scripts/ui.js"></script>
-
-
+<script type="module" src="./scripts/ui.js"></script>
 </body>
 </html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regex Validation Tests - Student Finance Tracker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    
+    h1 {
+      color: #2c14c6;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 2rem;
+    }
+    
+    .test-section {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #6528e8;
+    }
+    
+    .test-section h2 {
+      color: #2c14c6;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .test-case {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .test-input {
+      font-family: 'Courier New', monospace;
+      background: #f0f0f0;
+      padding: 0.5rem;
+      border-radius: 4px;
+      display: inline-block;
+      margin: 0.25rem 0;
+    }
+    
+    .test-result {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    
+    .pass {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .fail {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .pattern {
+      background: #fff3cd;
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+      font-family: 'Courier New', monospace;
+      border-left: 3px solid #ffc107;
+    }
+    
+    .summary {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .summary h3 {
+      margin-bottom: 0.5rem;
+    }
+    
+    .summary .stats {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 1rem 0;
+    }
+    
+    code {
+      background: #e9ecef;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Regex Validation Tests</h1>
+    <p class="subtitle">Student Finance Tracker - Comprehensive Pattern Testing</p>
+    
+    <div id="test-results"></div>
+    <div id="summary"></div>
+  </div>
+
+  <script type="module">
+    import { 
+      validateDescription, 
+      validateAmount, 
+      validateDate, 
+      validateCategory,
+      detectDuplicateWords,
+      hasCents,
+      isBeverage
+    } from './scripts/validators.js';
+
+    let totalTests = 0;
+    let passedTests = 0;
+    const resultsContainer = document.getElementById('test-results');
+
+    function runTest(testName, testFn, input, expectedValid, expectedMessage = null) {
+      totalTests++;
+      const result = testFn(input);
+      const passed = result.valid === expectedValid;
+      
+      if (passed) passedTests++;
+
+      const testCase = document.createElement('div');
+      testCase.className = 'test-case';
+      testCase.innerHTML = `
+        <strong>${testName}</strong><br>
+        <span class="test-input">Input: "${input}"</span><br>
+        <span class="test-input">Expected: ${expectedValid ? 'Valid' : 'Invalid'}</span>
+        <div class="test-result ${passed ? 'pass' : 'fail'}">
+          ${passed ? '✅ PASS' : '❌ FAIL'} - 
+          ${result.valid ? 'Valid' : 'Invalid'}
+          ${result.message ? `<br>Message: ${result.message}` : ''}
+        </div>
+      `;
+      return testCase;
+    }
+
+    function createSection(title, pattern, description) {
+      const section = document.createElement('div');
+      section.className = 'test-section';
+      section.innerHTML = `
+        <h2>${title}</h2>
+        <p>${description}</p>
+        <div class="pattern"><strong>Pattern:</strong> <code>${pattern}</code></div>
+      `;
+      return section;
+    }
+
+    // Test 1: Description Validation
+    const descSection = createSection(
+      '1. Description Validation',
+      '/^\\S(?:.*\\S)?$/',
+      'No leading/trailing spaces, no consecutive spaces'
+    );
+    descSection.appendChild(runTest('Valid description', validateDescription, 'Lunch at cafeteria', true));
+    descSection.appendChild(runTest('Leading space', validateDescription, ' Lunch', false));
+    descSection.appendChild(runTest('Trailing space', validateDescription, 'Lunch ', false));
+    descSection.appendChild(runTest('Double spaces', validateDescription, 'Lunch  at  cafe', false));
+    descSection.appendChild(runTest('Single word', validateDescription, 'Lunch', true));
+    descSection.appendChild(runTest('Empty string', validateDescription, '', false));
+    resultsContainer.appendChild(descSection);
+
+    // Test 2: Amount Validation
+    const amountSection = createSection(
+      '2. Amount Validation',
+      '^(0|[1-9]\\d*)(\\.\\d{1,2})?$',
+      'Positive numbers with up to 2 decimal places'
+    );
+    amountSection.appendChild(runTest('Valid integer', validateAmount, '100', true));
+    amountSection.appendChild(runTest('Valid decimal', validateAmount, '12.50', true));
+    amountSection.appendChild(runTest('One decimal place', validateAmount, '8.5', true));
+    amountSection.appendChild(runTest('Three decimals (invalid)', validateAmount, '12.505', false));
+    amountSection.appendChild(runTest('Leading zero (invalid)', validateAmount, '012', false));
+    amountSection.appendChild(runTest('Negative (invalid)', validateAmount, '-10', false));
+    amountSection.appendChild(runTest('Zero', validateAmount, '0', true));
+    resultsContainer.appendChild(amountSection);
+
+    // Test 3: Date Validation
+    const dateSection = createSection(
+      '3. Date Validation',
+      '^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$',
+      'YYYY-MM-DD format with valid month and day ranges'
+    );
+    dateSection.appendChild(runTest('Valid date', validateDate, '2025-10-16', true));
+    dateSection.appendChild(runTest('Valid Jan 1', validateDate, '2025-01-01', true));
+    dateSection.appendChild(runTest('Valid Dec 31', validateDate, '2025-12-31', true));
+    dateSection.appendChild(runTest('Invalid month', validateDate, '2025-13-01', false));
+    dateSection.appendChild(runTest('Invalid day', validateDate, '2025-10-32', false));
+    dateSection.appendChild(runTest('Wrong format', validateDate, '10/16/2025', false));
+    dateSection.appendChild(runTest('Missing leading zero', validateDate, '2025-1-5', false));
+    resultsContainer.appendChild(dateSection);
+
+    // Test 4: Category Validation
+    const categorySection = createSection(
+      '4. Category Validation',
+      '/^[A-Za-z]+(?:[ -][A-Za-z]+)*$/',
+      'Letters, spaces, and hyphens only'
+    );
+    categorySection.appendChild(runTest('Single word', validateCategory, 'Food', true));
+    categorySection.appendChild(runTest('Two words', validateCategory, 'Fast Food', true));
+    categorySection.appendChild(runTest('With hyphen', validateCategory, 'On-Campus', true));
+    categorySection.appendChild(runTest('Mixed spacing', validateCategory, 'Extra Curricular Activities', true));
+    categorySection.appendChild(runTest('Numbers (invalid)', validateCategory, 'Food123', false));
+    categorySection.appendChild(runTest('Special chars (invalid)', validateCategory, 'Food&Drink', false));
+    categorySection.appendChild(runTest('Leading space', validateCategory, ' Food', false));
+    resultsContainer.appendChild(categorySection);
+
+    // Test 5: Advanced - Duplicate Words Detection
+    const dupSection = createSection(
+      '5. Advanced - Duplicate Words (Back-reference)',
+      '\\b(\\w+)\\s+\\1\\b',
+      'Detects consecutive duplicate words using back-reference'
+    );
+    
+    function testDuplicate(name, input, expectedDuplicate) {
+      totalTests++;
+      const result = detectDuplicateWords(input);
+      const passed = result.hasDuplicate === expectedDuplicate;
+      
+      if (passed) passedTests++;
+
+      const testCase = document.createElement('div');
+      testCase.className = 'test-case';
+      testCase.innerHTML = `
+        <strong>${name}</strong><br>
+        <span class="test-input">Input: "${input}"</span><br>
+        <div class="test-result ${passed ? 'pass' : 'fail'}">
+          ${passed ? '✅ PASS' : '❌ FAIL'} - 
+          ${result.hasDuplicate ? `Found duplicate: "${result.word}"` : 'No duplicates'}
+        </div>
+      `;
+      return testCase;
+    }
+
+    dupSection.appendChild(testDuplicate('Duplicate "coffee"', 'coffee coffee', true));
+    dupSection.appendChild(testDuplicate('Duplicate "the"', 'the the book', true));
+    dupSection.appendChild(testDuplicate('No duplicates', 'coffee tea', false));
+    dupSection.appendChild(testDuplicate('Similar but not duplicate', 'coffee coffees', false));
+    dupSection.appendChild(testDuplicate('Case insensitive', 'Coffee coffee', true));
+    resultsContainer.appendChild(dupSection);
+
+    // Test 6: Advanced - Cents Detection
+    const centsSection = createSection(
+      '6. Advanced - Cents Detection',
+      '/\\.\\d{2}\\b/',
+      'Detects if amount has exactly 2 decimal places (cents)'
+    );
+    
+    function testCents(name, input, expectedHasCents) {
+      totalTests++;
+      const result = hasCents(input);
+      const passed = result === expectedHasCents;
+      
+      if (passed) passedTests++;
+
+      const testCase = document.createElement('div');
+      testCase.className = 'test-case';
+      testCase.innerHTML = `
+        <strong>${name}</strong><br>
+        <span class="test-input">Input: "${input}"</span><br>
+        <div class="test-result ${passed ? 'pass' : 'fail'}">
+          ${passed ? '✅ PASS' : '❌ FAIL'} - 
+          ${result ? 'Has cents' : 'No cents'}
+        </div>
+      `;
+      return testCase;
+    }
+
+    centsSection.appendChild(testCents('Has cents', '12.50', true));
+    centsSection.appendChild(testCents('Has cents', '100.99', true));
+    centsSection.appendChild(testCents('No cents', '100', false));
+    centsSection.appendChild(testCents('One decimal', '12.5', false));
+    centsSection.appendChild(testCents('Three decimals', '12.505', false));
+    resultsContainer.appendChild(centsSection);
+
+    // Test 7: Advanced - Beverage Detection
+    const beverageSection = createSection(
+      '7. Advanced - Beverage Keywords',
+      '/(coffee|tea|juice|soda|drink|beverage)/i',
+      'Detects beverage-related keywords (case insensitive)'
+    );
+    
+    function testBeverage(name, input, expectedIsBeverage) {
+      totalTests++;
+      const result = isBeverage(input);
+      const passed = result === expectedIsBeverage;
+      
+      if (passed) passedTests++;
+
+      const testCase = document.createElement('div');
+      testCase.className = 'test-case';
+      testCase.innerHTML = `
+        <strong>${name}</strong><br>
+        <span class="test-input">Input: "${input}"</span><br>
+        <div class="test-result ${passed ? 'pass' : 'fail'}">
+          ${passed ? '✅ PASS' : '❌ FAIL'} - 
+          ${result ? 'Is beverage' : 'Not beverage'}
+        </div>
+      `;
+      return testCase;
+    }
+
+    beverageSection.appendChild(testBeverage('Coffee', 'Morning coffee', true));
+    beverageSection.appendChild(testBeverage('Tea', 'Afternoon tea', true));
+    beverageSection.appendChild(testBeverage('Juice', 'Orange juice', true));
+    beverageSection.appendChild(testBeverage('Soda', 'Cold soda', true));
+    beverageSection.appendChild(testBeverage('Not beverage', 'Pizza lunch', false));
+    beverageSection.appendChild(testBeverage('Case insensitive', 'COFFEE BREAK', true));
+    resultsContainer.appendChild(beverageSection);
+
+    // Summary
+    const percentage = ((passedTests / totalTests) * 100).toFixed(1);
+    const summaryDiv = document.getElementById('summary');
+    summaryDiv.innerHTML = `
+      <div class="summary">
+        <h3>📊 Test Summary</h3>
+        <div class="stats">${passedTests} / ${totalTests} Tests Passed</div>
+        <p style="font-size: 1.2rem;">${percentage}% Success Rate</p>
+        <p style="margin-top: 1rem; opacity: 0.9;">
+          ${passedTests === totalTests ? 
+            '🎉 All tests passed! Regex validation is working perfectly!' : 
+            '⚠️ Some tests failed. Review the patterns above.'}
+        </p>
+      </div>
+    `;
+  </script>
+</body>
+</html>

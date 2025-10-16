@@ -6,6 +6,17 @@
   --secondary: #f2eef4;
 }
 
+.dark {
+  --bg: #0f1724;
+  --card: #111827;
+  --text: #f4f6fb;
+  --accent: #8b5cf6;
+}
+
+/* use variables */
+body { background: var(--bg); color: var(--text); }
+section { background: var(--card); }
+
 /* BODY & HEADER */
 body {
   font-family: "Poppins", sans-serif;
@@ -19,7 +30,7 @@ body {
 
 header {
   text-align: center;
-  padding: 2rem 1rem;
+  padding: 2rem 1rem; 
 }
 
 header .highlighted {
@@ -65,6 +76,58 @@ nav ul li a {
   transition: all 0.3s ease;
 }
 
+#about {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 3rem;
+  text-align: center;
+  box-shadow: 0 2px 5px e0f4ff;
+}
+
+.button {
+  display: inline-block; /* allows transform animations */
+  border-radius: 20px;
+  background: linear-gradient(to right, #2c14c6, #6528e8);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  animation: bounce 0.4s ease;
+  box-shadow: 0 0 15px rgba(101, 40, 232, 0.4);
+}
+
+@keyframes bounce {
+  0%   { transform: translateY(0); }
+  30%  { transform: translateY(-5px); }
+  60%  { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+
+.btn {
+  border-radius: 20px;
+  background-color: white;
+  color: rgb(10, 9, 9);
+  padding: 0.5rem 1.5rem;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background-color: #6528e8;
+  cursor: pointer;
+  color: white;
+}
+
+#about li {
+  margin: 1rem;
+  text-align: left;
+}
+
 nav ul li a i {
   font-size: 1.4rem;
   margin-bottom: 0.2rem;
@@ -103,11 +166,445 @@ nav ul li a.active i {
 }
 
 /* main section to handle visibility */
+
+/* Remove the blanket display: none */
+/* Make sure this matches your HTML structure */
 main section {
-  display: none; /* hide all sections initially */
+  display: none;
 }
 
-/* show the dashboard by default */
-#dashboard {
+header {
+  display: none;
+}
+
+/* You can remove this if using JavaScript */
+header#home {
   display: block;
+}
+
+.trend-bars {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  height: 150px;
+  margin-top: 1rem;
+}
+
+.bar {
+  flex: 1;
+  background: #eee;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar .fill {
+  width: 100%;
+  background: linear-gradient(to top, #2c14c6, #6528e8);
+  border-radius: 6px;
+  transition: height 0.3s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+nav a.active {
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* -------------------- LAPTOP & DESKTOP VIEW -------------------- */
+@media (min-width: 1024px) {
+
+  body {
+    padding-bottom: 0; /* remove extra space used for mobile bottom nav */
+  }
+
+  header {
+    text-align: left;
+    padding: 3rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  header h1 {
+    font-size: 2.5rem;
+  }
+
+  header p {
+    font-size: 1.1rem;
+    max-width: 800px;
+  }
+
+  /* NAVIGATION — move to top */
+  nav {
+    position: fixed;
+    top: 0;
+    bottom: unset;
+    width: 100%;
+    border-bottom: 2px solid #7e8ca6;
+    border-top: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+
+  nav ul {
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  nav ul li a {
+    flex-direction: row;
+    font-size: 1rem;
+    padding: 0.7rem 1.2rem;
+  }
+
+  nav ul li a i {
+    margin-right: 0.5rem;
+  }
+
+  /* MAIN CONTENT layout */
+  main {
+    margin-top: 6rem; /* leave space for top nav */
+    padding: 2rem 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  main section {
+    max-width: 1000px;
+    width: 100%;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    padding: 2rem 3rem;
+    margin-bottom: 3rem;
+  }
+
+  /* TABLE STYLING for laptops */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+
+  th, td {
+    padding: 0.8rem 1rem;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f3f3f3;
+  }
+
+  tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+
+  /* DASHBOARD layout (side-by-side cards) */
+  #dashboard .stats {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  #dashboard .stats p {
+    flex: 1 1 30%;
+    background: var(--secondary);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align : center;
+    font-weight: 500;
+    }
+  }
+    
+/* Dashboard Stats Cards */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(101, 40, 232, 0.2);
+}
+
+.stat-card i {
+  font-size: 2rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.stat-card p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.5rem 0;
+}
+
+.stat-card span {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary);
+  display: block;
+}
+
+/* Budget Cap Section */
+.budget-cap {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.budget-cap h3 {
+  margin-top: 0;
+  color: var(--primary);
+}
+
+.budget-cap label {
+  display: block;
+  margin: 1rem 0 0.5rem;
+  font-weight: 500;
+}
+
+.budget-cap input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.budget-cap button {
+  background: linear-gradient(to right, #2c14c6, #6528e8);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.budget-cap button:hover {
+  transform: scale(1.05);
+}
+
+/* Charts Container */
+.charts-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.chart-box {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.chart-box h3 {
+  margin-top: 0;
+  color: var(--primary);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.chart-box canvas {
+  max-height: 300px;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .charts-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .chart-box canvas {
+    max-height: 350px;
+  }
+}
+
+
+/* Clear, high-contrast focus ring for keyboard users */
+:focus {
+  outline: 3px solid #ffd54f;
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+/* More subtle focus for interactive icons/links */
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Make nav links keyboard friendly (bigger hit target) */
+nav ul li a {
+  padding: 0.6rem 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Enhanced focus indicators */
+*:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button:focus,
+a:focus,
+input:focus,
+select:focus {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(101, 40, 232, 0.2);
+}
+
+/* Better button styles */
+button,
+.button,
+.btn {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Form accessibility */
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+input[aria-invalid="true"],
+select[aria-invalid="true"] {
+  border-color: #dc3545;
+  outline-color: #dc3545;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Table accessibility */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+th {
+  background: var(--primary);
+  color: white;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+tr:hover {
+  background: #f8f9fa;
+}
+
+/* Mark (search highlight) accessibility */
+mark {
+  background-color: #ffeb3b;
+  color: #000;
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1; /* takes remaining space so footer is pushed to bottom */
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #f5f5f5;
+}
+
+
+#last-7-days-btn {
+  display: none;
+  margin-bottom: 10px;
 }
