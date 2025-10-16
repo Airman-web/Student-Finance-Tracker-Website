@@ -210,7 +210,7 @@ export function updateHighlightedOutput(containerId, text, regexResult) {
 }
 
 /**
- * Example usage: wired to input fields
+ * Setup event listeners for regex tester UI
  */
 export function setupRegexUI() {
   const patternInput = document.getElementById('regexPattern');

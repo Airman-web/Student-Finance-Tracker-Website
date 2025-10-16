@@ -11,8 +11,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   function setTheme(theme) {
-  if (theme === 'dark') document.documentElement.classList.add('dark');
-  else document.documentElement.classList.remove('dark');
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeIconNav = document.getElementById('theme-icon-nav');
+    if (themeIcon) themeIcon.textContent = '☀️';
+    if (themeIconNav) themeIconNav.textContent = '☀️';
+  } else {
+    document.documentElement.classList.remove('dark');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeIconNav = document.getElementById('theme-icon-nav');
+    if (themeIcon) themeIcon.textContent = '🌙';
+    if (themeIconNav) themeIconNav.textContent = '🌙';
+  }
   localStorage.setItem('theme', theme);
   if (themeToggle) themeToggle.setAttribute('aria-pressed', theme === 'dark');
 }
@@ -27,16 +38,33 @@ if (themeToggle) {
   });
 }
 
+// Add event listener for navigation theme toggle
+const themeToggleNav = document.getElementById('theme-toggle-nav');
+if (themeToggleNav) {
+  themeToggleNav.addEventListener('click', () => {
+    const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+    setTheme(next);
+  });
+}
+
 
   // ----------------- ELEMENTS -----------------
   const recordsBody = document.getElementById('records-body');
-  const searchInput = document.getElementById('search');
   const form = document.getElementById('record-form');
   const navLinks = document.querySelectorAll("nav a");
   const getStartedBtn = document.querySelector(".button");  
   const learnMoreBtn = document.querySelector(".btn");
   const allSections = document.querySelectorAll("main section");
   const header = document.querySelector("header");
+
+  // ----------------- FILTER STATE -----------------
+  let currentFilters = {
+    description: '',
+    dateFrom: '',
+    dateTo: '',
+    amount: '',
+    category: ''
+  };
 
   console.log("Form found:", !!form);
   console.log("Get Started button:", !!getStartedBtn);
@@ -81,13 +109,13 @@ if (themeToggle) {
       renderRecords();
     }
 
-    // Show/Hide Last 7 Days button only on Records page
-const last7DaysBtn = document.getElementById('last-7-days-btn');
-if (last7DaysBtn) {
+    // Show/Hide Filter controls only on Records page
+const filterControls = document.querySelector('.filter-controls');
+if (filterControls) {
   if (targetId === 'records') {
-    last7DaysBtn.style.display = 'inline-block';
+    filterControls.style.display = 'block';
   } else {
-    last7DaysBtn.style.display = 'none';
+    filterControls.style.display = 'none';
   }
 }
 
@@ -101,17 +129,87 @@ if (last7DaysBtn) {
 function renderRecords(records = null) {
   const data = records || loadRecords();
 
-  const today = new Date();
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(today.getDate() - 6); // last 7 days including today
+  // Sort records by date in descending order (most recent first)
+  const sortedRecords = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  // Apply current filters
+  const filteredRecords = applyFilters(sortedRecords);
 
-  // Filter records from the last 7 days
-  const last7DaysRecords = data.filter(r => {
-    const recordDate = new Date(r.date);
-    return recordDate >= sevenDaysAgo && recordDate <= today;
+  renderRecordsWithHighlight(filteredRecords, null);
+}
+
+// Function to apply all active filters
+function applyFilters(records) {
+  return records.filter(record => {
+    // Description filter (case-insensitive)
+    if (currentFilters.description && !record.description.toLowerCase().includes(currentFilters.description.toLowerCase())) {
+      return false;
+    }
+    
+    // Date range filter
+    if (currentFilters.dateFrom && new Date(record.date) < new Date(currentFilters.dateFrom)) {
+      return false;
+    }
+    if (currentFilters.dateTo && new Date(record.date) > new Date(currentFilters.dateTo)) {
+      return false;
+    }
+    
+    // Amount filter (exact match)
+    if (currentFilters.amount && parseFloat(record.amount) !== parseFloat(currentFilters.amount)) {
+      return false;
+    }
+    
+    // Category filter
+    if (currentFilters.category && record.category !== currentFilters.category) {
+      return false;
+    }
+    
+    return true;
   });
+}
 
-  renderRecordsWithHighlight(last7DaysRecords, null);
+// Function to update filters and re-render
+function updateFilters() {
+  const descriptionFilter = document.getElementById('filter-description');
+  const dateFromFilter = document.getElementById('filter-date-from');
+  const dateToFilter = document.getElementById('filter-date-to');
+  const amountFilter = document.getElementById('filter-amount');
+  const categoryFilter = document.getElementById('filter-category');
+  
+  currentFilters = {
+    description: descriptionFilter ? descriptionFilter.value.trim() : '',
+    dateFrom: dateFromFilter ? dateFromFilter.value : '',
+    dateTo: dateToFilter ? dateToFilter.value : '',
+    amount: amountFilter ? amountFilter.value.trim() : '',
+    category: categoryFilter ? categoryFilter.value : ''
+  };
+  
+  renderRecords();
+}
+
+// Function to clear all filters
+function clearFilters() {
+  const descriptionFilter = document.getElementById('filter-description');
+  const dateFromFilter = document.getElementById('filter-date-from');
+  const dateToFilter = document.getElementById('filter-date-to');
+  const amountFilter = document.getElementById('filter-amount');
+  const categoryFilter = document.getElementById('filter-category');
+  
+  if (descriptionFilter) descriptionFilter.value = '';
+  if (dateFromFilter) dateFromFilter.value = '';
+  if (dateToFilter) dateToFilter.value = '';
+  if (amountFilter) amountFilter.value = '';
+  if (categoryFilter) categoryFilter.value = '';
+  
+  currentFilters = {
+    description: '',
+    dateFrom: '',
+    dateTo: '',
+    amount: '',
+    category: ''
+  };
+  
+  renderRecords();
 }
 
 
@@ -315,10 +413,52 @@ form.addEventListener("submit", e => {
 
   // Import JSON
   if (importBtn && importFile) {
-    importBtn.addEventListener('click', () => {
-      importFile.click();
+    importBtn.addEventListener('click', async () => {
+      try {
+        // Fetch seed.json from root folder
+        const response = await fetch('./seed.json');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch seed.json: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        // Validate structure
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid format: data must be an array');
+        }
+        
+        // Validate each record
+        data.forEach((record, index) => {
+          if (!record.id || !record.description || !record.amount || !record.category || !record.date) {
+            throw new Error(`Invalid record at index ${index}: missing required fields`);
+          }
+        });
+        
+        // Save and reload
+        saveRecords(data);
+        renderRecords();
+        renderDashboard();
+        
+        if (importStatus) {
+          importStatus.textContent = `✅ Successfully imported ${data.length} records from seed.json`;
+          importStatus.style.color = 'green';
+          
+          setTimeout(() => {
+            importStatus.textContent = '';
+          }, 3000);
+        }
+        
+      } catch (error) {
+        console.error('Import error:', error);
+        if (importStatus) {
+          importStatus.textContent = `❌ Import failed: ${error.message}`;
+          importStatus.style.color = 'red';
+        }
+      }
     });
     
+    // Keep the file input functionality as backup
     importFile.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -390,9 +530,33 @@ form.addEventListener("submit", e => {
     });
   }
 
+
+  // ----------------- FILTER CONTROLS -----------------
+  const applyFiltersBtn = document.getElementById('apply-filters');
+  const clearFiltersBtn = document.getElementById('clear-filters');
+  
+  if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener('click', () => {
+      updateFilters();
+    });
+  }
+  
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener('click', () => {
+      clearFilters();
+    });
+  }
+  
+  // Add real-time filtering for description (as user types)
+  const descriptionFilter = document.getElementById('filter-description');
+  if (descriptionFilter) {
+    descriptionFilter.addEventListener('input', () => {
+      updateFilters();
+    });
+  }
+
   // ----------------- INITIAL LOAD -----------------
   showSection("home");
   renderRecords();
   loadAndDisplaySettings();
 });
-

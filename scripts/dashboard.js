@@ -261,7 +261,7 @@ function updateBudgetStatus() {
     budgetStatus.style.border = '1px solid #c3e6cb';
     budgetStatus.setAttribute('aria-live', 'polite');
     budgetStatus.innerHTML = `
-      <strong>✅ Under Budget</strong><br>
+      <strong>Under Budget</strong><br>
       Spent: ${total.toFixed(2)} / ${budgetLimit.toFixed(2)}<br>
       Remaining: ${remaining.toFixed(2)} (${(100 - percentage).toFixed(1)}%)
       <div style="background: #fff; height: 20px; border-radius: 10px; margin-top: 8px; overflow: hidden;">
@@ -274,7 +274,7 @@ function updateBudgetStatus() {
     budgetStatus.style.border = '1px solid #f5c6cb';
     budgetStatus.setAttribute('aria-live', 'assertive');
     budgetStatus.innerHTML = `
-      <strong>⚠️ Over Budget!</strong><br>
+      <strong> Over Budget!</strong><br>
       Spent: ${total.toFixed(2)} / ${budgetLimit.toFixed(2)}<br>
       Overage: ${Math.abs(remaining).toFixed(2)} (${(percentage - 100).toFixed(1)}% over)
       <div style="background: #fff; height: 20px; border-radius: 10px; margin-top: 8px; overflow: hidden;">
