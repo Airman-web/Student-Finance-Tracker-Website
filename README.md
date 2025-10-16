@@ -503,8 +503,7 @@ SOFTWARE.
 📧 Email: [e.atigbi@alustudent.com](mailto:e.atigbi@alustudent.com)  
 🐙 GitHub: [https://github.com/Airman-web](https://github.com/Airman-web) 
   Live Link: [https://airman-web.github.io/Student-Finance-Tracker-Website/]
-🔗 LinkedIn: [Your LinkedIn Profile]  
-🌐 Portfolio: [Your Portfolio URL]
+
 
 ---
 
