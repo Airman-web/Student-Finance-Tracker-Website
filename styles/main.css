@@ -117,14 +117,14 @@ nav ul li a {
   transition: all 0.3s ease;
 }
 
-/* Compact icon-only nav on very small screens */
+/* Very small screens: keep labels visible for clarity */
 @media (max-width: 420px) {
   nav ul li a span,
   #theme-toggle-nav span {
-    display: none;
+    display: inline; /* show nav labels on phones */
   }
   nav ul li a {
-    padding: 0.4rem; /* give icons comfortable hit target */
+    padding: 0.4rem 0.5rem; /* comfortable hit target */
   }
 }
 
@@ -527,7 +527,7 @@ nav ul li a {
 
 /* Skip to content link */
 .skip-link {
-  position: absolute;
+  position: fixed; /* ensure it's above layout and nav */
   top: -40px;
   left: 0;
   background: var(--primary);
@@ -535,11 +535,12 @@ nav ul li a {
   padding: 8px 16px;
   text-decoration: none;
   border-radius: 0 0 4px 0;
-  z-index: 100;
+  z-index: 2000; /* higher than nav */
   transition: top 0.3s ease;
 }
 
-.skip-link:focus {
+.skip-link:focus,
+.skip-link:focus-visible {
   top: 0;
   outline: 3px solid var(--accent);
   outline-offset: 2px;
