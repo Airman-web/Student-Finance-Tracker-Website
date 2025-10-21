@@ -117,14 +117,14 @@ nav ul li a {
   transition: all 0.3s ease;
 }
 
-/* Compact icon-only nav on very small screens */
+/* nav on very small screens */
 @media (max-width: 420px) {
   nav ul li a span,
   #theme-toggle-nav span {
-    display: none;
+    display: inline; /* show text labels */
   }
   nav ul li a {
-    padding: 0.4rem; /* give icons comfortable hit target */
+    padding: 0.4rem 0.5rem; /* give icons comfortable hit target */
   }
 }
 
@@ -527,7 +527,7 @@ nav ul li a {
 
 /* Skip to content link */
 .skip-link {
-  position: absolute;
+  position: fixed; 
   top: -40px;
   left: 0;
   background: var(--primary);
@@ -535,11 +535,12 @@ nav ul li a {
   padding: 8px 16px;
   text-decoration: none;
   border-radius: 0 0 4px 0;
-  z-index: 100;
+  z-index: 2000;
   transition: top 0.3s ease;
 }
 
-.skip-link:focus {
+.skip-link:focus,
+.skip-link:focus-visible {
   top: 0;
   outline: 3px solid var(--accent);
   outline-offset: 2px;
@@ -559,7 +560,7 @@ nav ul li a {
 }
 
 /* Enhanced focus indicators */
-*:focus {
+:focus {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -823,7 +824,7 @@ footer {
 /* Skip Link */
 .skip-link {
   background-color: var(--primary);
-  color: white;
+  color: rgb(37, 20, 193);
 }
 
 /* Highlighted Text */
@@ -842,3 +843,15 @@ mark {
   background-color: #f59e0b;
   color: #000;
 }
+
+/* Full-app background image theme */
+body {
+  background-image: url('https://media.gettyimages.com/id/1423646116/photo/woman-calculating-finances-at-home.jpg?s=2048x2048&w=gi&k=20&c=rYdakMib_DZ-Y7fBTSIzyaziO1uNcPpSkJsbaborA0Q=');
+  background-size: cover; 
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-blend-mode: var(--filter-bg); /* tint with theme bg for contrast */
+
+
+  }
