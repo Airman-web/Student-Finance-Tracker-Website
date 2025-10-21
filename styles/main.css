@@ -842,3 +842,13 @@ mark {
   background-color: #f59e0b;
   color: #000;
 }
+
+/* Full-app background image theme */
+body {
+  background-image: url('https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=1600&auto=format&fit=crop&q=80');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-blend-mode: multiply; /* tint with theme bg for contrast */
+}
